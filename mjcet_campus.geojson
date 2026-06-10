@@ -1,0 +1,1540 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "main_gate",
+        "label": "Main Gate",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.444616,
+          17.427381
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "junction_1",
+        "label": "Junction 1",
+        "type": "intersection"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.444677,
+          17.428476
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "junction_2",
+        "label": "Junction 2",
+        "type": "intersection"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.444101,
+          17.428279
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "junction_3",
+        "label": "Junction 3",
+        "type": "intersection"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442333,
+          17.428315
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "junction_4",
+        "label": "Junction 4",
+        "type": "intersection"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442268,
+          17.427718
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "junction_5",
+        "label": "Junction 5",
+        "type": "intersection"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442877,
+          17.427706
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "junction_6",
+        "label": "Junction 6",
+        "type": "intersection"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443505,
+          17.428174
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "mjcet_entrancegate",
+        "label": "MJCET Entrance Gate",
+        "type": "intersection"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.441458,
+          17.427708
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "Ghulam_ahmed",
+        "label": "Ghulam Ahmed Education Society",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.444795,
+          17.427965
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pharmacy_staircase",
+        "label": "Pharmacy Back Entrance",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443842,
+          17.427508
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pharmacy_entrance",
+        "label": "Sultan Ul Uloom College of Pharmacy",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443863,
+          17.42771
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "law_backtrance",
+        "label": "College of Law Back Entrance",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443991,
+          17.427837
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "law_college",
+        "label": "Sultan Ul Uloom College of Law",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.444639,
+          17.427475
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "business_entrance",
+        "label": "Amjad Ali Khan Business Administration",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.444358,
+          17.428097
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "Nonveg_canteen",
+        "label": "Non-Veg Canteen",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.444122,
+          17.428214
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "Veg_canteen",
+        "label": "Veg Canteen",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442464,
+          17.428354
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "block5_backtrance",
+        "label": "Block 5 Back Entrance",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443786,
+          17.428237
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sues",
+        "label": "Sultan Ul Uloom Education Society",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443423,
+          17.427961
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "Masjid_women",
+        "label": "Masjid Women's Entrance",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442454,
+          17.427855
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "masjid",
+        "label": "Masjid Main Entrance",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442587,
+          17.427627
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sports",
+        "label": "Sports Room Entrance",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443185,
+          17.427658
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "block_2n5_bridge",
+        "label": "Block 2 and 5 Bridge",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443695,
+          17.428532
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "Block_3",
+        "label": "Block 3 Entrance",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.441913,
+          17.427712
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "block_1",
+        "label": "Block 1",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442873,
+          17.428424
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "block_2",
+        "label": "Block 2",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443447,
+          17.428499
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "block_4",
+        "label": "Block 4",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.44284,
+          17.428042
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "block_5",
+        "label": "Block 5",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443938,
+          17.428563
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "blue_shed",
+        "label": "Blue Shed",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443135,
+          17.428452
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "Blue_arch",
+        "label": "Blue Arch",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.44459,
+          17.428512
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sups",
+        "label": "SUPS",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.445258,
+          17.428645
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sujc",
+        "label": "SUJC",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.445361,
+          17.428619
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "garden_ws",
+        "label": "Garden Workshop",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.441746,
+          17.427712
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "rockgarden",
+        "label": "Rock Garden",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442688,
+          17.427992
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gate_nearsukhf",
+        "label": "Gate near SUKHF",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442616,
+          17.428804
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sukhf_gate",
+        "label": "SUKHF Gate",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442569,
+          17.428844
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "stationary",
+        "label": "Stationary",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.442544,
+          17.428373
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "block4_entrance",
+        "label": "Block 4 Entrance",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.44284,
+          17.428042
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ga_hall",
+        "label": "Ghulam Ahmed Auditorium",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.443378,
+          17.428164
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "mjcet_back_gate",
+        "label": "MJCET Back Gate",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.441448,
+          17.427482
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "parking_backtrance",
+        "label": "Parking Back Entrance",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.441352,
+          17.427712
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "parking_main",
+        "label": "Main Parking",
+        "type": "destination"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.444639,
+          17.428501
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "mjcet_back_gate",
+        "to": "garden_ws",
+        "distance_m": 40.7,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.441447,
+            17.427482
+          ],
+          [
+            78.441458,
+            17.427708
+          ],
+          [
+            78.441745,
+            17.427713
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "garden_ws",
+        "to": "Block_3",
+        "distance_m": 17.7,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.441745,
+            17.427714
+          ],
+          [
+            78.441913,
+            17.427712
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "Block_3",
+        "to": "junction_4",
+        "distance_m": 37.7,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.441912,
+            17.427711
+          ],
+          [
+            78.442268,
+            17.427718
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "junction_4",
+        "to": "junction_3",
+        "distance_m": 66.7,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442268,
+            17.427718
+          ],
+          [
+            78.442333,
+            17.428315
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "junction_3",
+        "to": "Veg_canteen",
+        "distance_m": 14.6,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442331,
+            17.428315
+          ],
+          [
+            78.442464,
+            17.428354
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "Veg_canteen",
+        "to": "stationary",
+        "distance_m": 8.7,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442464,
+            17.428354
+          ],
+          [
+            78.442544,
+            17.428373
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "stationary",
+        "to": "block_1",
+        "distance_m": 35.4,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442544,
+            17.428373
+          ],
+          [
+            78.442872,
+            17.428424
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "block_1",
+        "to": "blue_shed",
+        "distance_m": 28.0,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442872,
+            17.428423
+          ],
+          [
+            78.443135,
+            17.428452
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "blue_shed",
+        "to": "block_2",
+        "distance_m": 33.5,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443135,
+            17.428452
+          ],
+          [
+            78.443447,
+            17.428499
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "block_2",
+        "to": "block_2n5_bridge",
+        "distance_m": 26.6,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443447,
+            17.428499
+          ],
+          [
+            78.443694,
+            17.42853
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "block_2n5_bridge",
+        "to": "block_5",
+        "distance_m": 26.0,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443695,
+            17.428531
+          ],
+          [
+            78.443938,
+            17.428563
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "block_5",
+        "to": "Blue_arch",
+        "distance_m": 69.4,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443938,
+            17.428563
+          ],
+          [
+            78.444081,
+            17.428582
+          ],
+          [
+            78.444216,
+            17.428572
+          ],
+          [
+            78.44459,
+            17.428512
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "junction_1",
+        "to": "sups",
+        "distance_m": 64.4,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.444677,
+            17.428476
+          ],
+          [
+            78.444813,
+            17.428676
+          ],
+          [
+            78.445,
+            17.428703
+          ],
+          [
+            78.445258,
+            17.428645
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "sups",
+        "to": "sujc",
+        "distance_m": 11.3,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.445258,
+            17.428645
+          ],
+          [
+            78.445361,
+            17.428619
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "stationary",
+        "to": "gate_nearsukhf",
+        "distance_m": 48.5,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442544,
+            17.428373
+          ],
+          [
+            78.442597,
+            17.428382
+          ],
+          [
+            78.442615,
+            17.428384
+          ],
+          [
+            78.442613,
+            17.4284
+          ],
+          [
+            78.442614,
+            17.428421
+          ],
+          [
+            78.442616,
+            17.428462
+          ],
+          [
+            78.442615,
+            17.42858
+          ],
+          [
+            78.442617,
+            17.428804
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "sukhf_gate",
+        "to": "gate_nearsukhf",
+        "distance_m": 6.7,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442569,
+            17.428843
+          ],
+          [
+            78.442619,
+            17.42885
+          ],
+          [
+            78.442616,
+            17.428804
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "junction_2",
+        "to": "junction_1",
+        "distance_m": 64.9,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.444101,
+            17.428279
+          ],
+          [
+            78.444677,
+            17.428476
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "junction_2",
+        "to": "Nonveg_canteen",
+        "distance_m": 7.6,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.444101,
+            17.428279
+          ],
+          [
+            78.444114,
+            17.428265
+          ],
+          [
+            78.444125,
+            17.428244
+          ],
+          [
+            78.444122,
+            17.428214
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "junction_1",
+        "to": "Ghulam_ahmed",
+        "distance_m": 58.2,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.444677,
+            17.428476
+          ],
+          [
+            78.444699,
+            17.428228
+          ],
+          [
+            78.444785,
+            17.428101
+          ],
+          [
+            78.444839,
+            17.428025
+          ],
+          [
+            78.444795,
+            17.427965
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "block5_backtrance",
+        "to": "junction_2",
+        "distance_m": 33.7,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443786,
+            17.428237
+          ],
+          [
+            78.443941,
+            17.428271
+          ],
+          [
+            78.444027,
+            17.428287
+          ],
+          [
+            78.444101,
+            17.428279
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "Nonveg_canteen",
+        "to": "law_backtrance",
+        "distance_m": 44.2,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.444122,
+            17.428214
+          ],
+          [
+            78.444025,
+            17.428044
+          ],
+          [
+            78.443975,
+            17.427952
+          ],
+          [
+            78.44393,
+            17.427875
+          ],
+          [
+            78.443991,
+            17.427837
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "pharmacy_entrance",
+        "to": "law_backtrance",
+        "distance_m": 19.6,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443863,
+            17.42771
+          ],
+          [
+            78.443891,
+            17.427798
+          ],
+          [
+            78.44392,
+            17.427841
+          ],
+          [
+            78.443991,
+            17.427837
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "pharmacy_staircase",
+        "to": "pharmacy_entrance",
+        "distance_m": 22.6,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443842,
+            17.427508
+          ],
+          [
+            78.443863,
+            17.42771
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "sports",
+        "to": "sues",
+        "distance_m": 42.1,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443185,
+            17.427658
+          ],
+          [
+            78.443423,
+            17.427961
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "block4_entrance",
+        "to": "ga_hall",
+        "distance_m": 58.7,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.44284,
+            17.428042
+          ],
+          [
+            78.443378,
+            17.428164
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "rockgarden",
+        "to": "block4_entrance",
+        "distance_m": 17.1,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442688,
+            17.427992
+          ],
+          [
+            78.44284,
+            17.428042
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "rockgarden",
+        "to": "Masjid_women",
+        "distance_m": 29.1,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442688,
+            17.427992
+          ],
+          [
+            78.442491,
+            17.427919
+          ],
+          [
+            78.442454,
+            17.427855
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "junction_4",
+        "to": "Masjid_women",
+        "distance_m": 24.9,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442268,
+            17.427718
+          ],
+          [
+            78.442454,
+            17.427855
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "Nonveg_canteen",
+        "to": "business_entrance",
+        "distance_m": 28.2,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.444122,
+            17.428214
+          ],
+          [
+            78.444358,
+            17.428097
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "main_gate",
+        "to": "Ghulam_ahmed",
+        "distance_m": 67.7,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.444615,
+            17.427382
+          ],
+          [
+            78.444639,
+            17.427475
+          ],
+          [
+            78.444795,
+            17.427966
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "block5_backtrance",
+        "to": "ga_hall",
+        "distance_m": 44.0,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443786,
+            17.428237
+          ],
+          [
+            78.443505,
+            17.428174
+          ],
+          [
+            78.443379,
+            17.428164
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "sues",
+        "to": "junction_6",
+        "distance_m": 25.2,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443423,
+            17.427962
+          ],
+          [
+            78.443505,
+            17.428174
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "parking_backtrance",
+        "to": "mjcet_entrancegate",
+        "distance_m": 11.3,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.441352,
+            17.427713
+          ],
+          [
+            78.441458,
+            17.427708
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "junction_1",
+        "to": "Blue_arch",
+        "distance_m": 10.1,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.444677,
+            17.428476
+          ],
+          [
+            78.444639,
+            17.428501
+          ],
+          [
+            78.44459,
+            17.428513
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "sports",
+        "to": "junction_5",
+        "distance_m": 33.1,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.443185,
+            17.427658
+          ],
+          [
+            78.442877,
+            17.427706
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "from": "Masjid_women",
+        "to": "masjid",
+        "distance_m": 29.0,
+        "type": "path"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.442453,
+            17.427855
+          ],
+          [
+            78.442428,
+            17.427826
+          ],
+          [
+            78.442585,
+            17.42781
+          ],
+          [
+            78.442877,
+            17.427706
+          ],
+          [
+            78.442796,
+            17.427551
+          ],
+          [
+            78.442588,
+            17.427627
+          ]
+        ]
+      }
+    }
+  ]
+}
