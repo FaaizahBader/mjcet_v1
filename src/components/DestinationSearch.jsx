@@ -23,18 +23,30 @@ export default function DestinationSearch({ destinations, value, onChange }) {
 
   return (
     <div className="destination-search">
-      <input
-        type="search"
-        placeholder="Search destination..."
-        value={open ? query : value?.label ?? query}
-        onChange={(event) => {
-          setQuery(event.target.value)
-          setOpen(true)
-        }}
-        onFocus={() => setOpen(true)}
-        aria-label="Search destination"
-        autoComplete="off"
-      />
+      <div className="destination-input-wrap">
+        <input
+          type="search"
+          placeholder="Search destination..."
+          value={open ? query : value?.label ?? query}
+          onChange={(event) => {
+            setQuery(event.target.value)
+            setOpen(true)
+          }}
+          onFocus={() => setOpen(true)}
+          aria-label="Search destination"
+          autoComplete="off"
+        />
+        {open && (
+          <button
+            type="button"
+            className="destination-close"
+            onClick={() => setOpen(false)}
+            aria-label="Close destination dropdown"
+          >
+            X
+          </button>
+        )}
+      </div>
 
       {open && filtered.length > 0 && (
         <ul className="destination-list" role="listbox">

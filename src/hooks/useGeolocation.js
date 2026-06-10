@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability, react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { smoothCoordinate } from '../lib/geo'
 
@@ -67,19 +68,19 @@ export function useGeolocation() {
 
       watchIdRef.current = navigator.geolocation.watchPosition(
         (pos) => {
-          if (modeRef.current !== 'manual') {
+          if (modeRef.current !== 'error') {
             applyPosition(mapPosition(pos, sourceLabel))
           }
         },
         (err) => {
-          if (modeRef.current === 'manual') return
+          if (modeRef.current === 'error') return
 
           if (err.code === 1) {
             setError(
-              'Location permission denied. Enable GPS in browser settings or tap the map to set your location manually.',
+              'Location permission denied. Enable GPS in browser settings to use navigation.',
             )
-            setStatus('manual')
-            modeRef.current = 'manual'
+            setStatus('error')
+            modeRef.current = 'error'
             clearWatch()
             return
           }
@@ -93,10 +94,10 @@ export function useGeolocation() {
           }
 
           setError(
-            'Unable to get your location. Try moving outdoors or tap the map to set your location manually.',
+            'Unable to get your location. Try moving outdoors or enable location access in your browser.',
           )
-          setStatus('manual')
-          modeRef.current = 'manual'
+          setStatus('error')
+          modeRef.current = 'error'
         },
         options,
       )
@@ -107,10 +108,10 @@ export function useGeolocation() {
   useEffect(() => {
     if (!navigator.geolocation) {
       setError(
-        'Geolocation is not supported. Tap the map to set your location manually.',
+        'Geolocation is not supported by this browser.',
       )
-      setStatus('manual')
-      modeRef.current = 'manual'
+      setStatus('error')
+      modeRef.current = 'error'
       return undefined
     }
 
@@ -129,43 +130,6 @@ export function useGeolocation() {
     return clearWatch
   }, [clearWatch, startWatch])
 
-  const setManualPosition = useCallback(
-    (coords) => {
-      modeRef.current = 'manual'
-      clearWatch()
-      smoothRef.current = coords
-      setPosition(coords)
-      setAccuracy(25)
-      setSource('manual')
-      setStatus('manual')
-      setError(null)
-    },
-    [clearWatch],
-  )
-
-  const resumeGps = useCallback(() => {
-    if (!navigator.geolocation) return false
-
-    clearWatch()
-    modeRef.current = 'gps'
-    smoothRef.current = null
-    setSource(null)
-    setStatus('pending')
-    setError(null)
-    startWatch(HIGH_ACCURACY_OPTIONS, 'gps')
-
-    fallbackTimerRef.current = setTimeout(() => {
-      if (modeRef.current === 'gps' && !smoothRef.current) {
-        clearWatch()
-        modeRef.current = 'network'
-        setStatus('fallback')
-        startWatch(NETWORK_OPTIONS, 'network')
-      }
-    }, 12000)
-
-    return true
-  }, [clearWatch, startWatch])
-
   const recenterAvailable = !!position
 
   return {
@@ -174,8 +138,6 @@ export function useGeolocation() {
     error,
     status,
     source,
-    setManualPosition,
-    resumeGps,
     recenterAvailable,
   }
 }

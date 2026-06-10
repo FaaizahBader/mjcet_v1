@@ -16,7 +16,6 @@ import {
 } from '../lib/constants'
 import MapInitialCenter from './MapInitialCenter'
 import RouteFitBounds from './RouteFitBounds'
-import MapClickHandler from './MapClickHandler'
 import MapControls from './MapControls'
 
 export default function CampusMap({
@@ -26,10 +25,6 @@ export default function CampusMap({
   routeCoordinates,
   destination,
   walkwayPaths,
-  manualMode,
-  onManualSelect,
-  onMapSelect,
-  onOutOfBounds,
   onRecenter,
 }) {
   return (
@@ -40,7 +35,7 @@ export default function CampusMap({
       maxZoom={MAX_ZOOM}
       maxBounds={CAMPUS_BOUNDS}
       maxBoundsViscosity={0.85}
-      className={`campus-map${manualMode ? ' manual-mode' : ''}`}
+      className="campus-map"
       zoomControl={false}
       scrollWheelZoom
       doubleClickZoom
@@ -60,11 +55,6 @@ export default function CampusMap({
         routeCoordinates={routeCoordinates}
         position={position}
         destinationCoords={destination?.coords}
-      />
-      <MapClickHandler
-        enabled={manualMode || !!onMapSelect}
-        onSelect={manualMode ? onManualSelect : onMapSelect}
-        onOutOfBounds={onOutOfBounds}
       />
 
       {walkwayPaths.map((path) => (
