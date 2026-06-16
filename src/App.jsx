@@ -20,7 +20,10 @@ import {
 } from './lib/speech'
 import { findShortestPath } from './lib/pathfinding'
 import { getIndoorMap } from './lib/indoorMaps'
-import { findIndoorShortestPath } from './lib/indoorRouting'
+import {
+  buildIndoorDirections,
+  findIndoorShortestPath,
+} from './lib/indoorRouting'
 import {
   canPromptForIndoor,
   createIndoorRequest,
@@ -92,6 +95,23 @@ function App() {
       if (!path) return null
 
       let routeCoordinates = path.routeCoordinates
+
+      if (
+        routeCoordinates.length > 0 &&
+        haversineDistance(startPosition, routeCoordinates[0]) > 2
+      ) {
+        routeCoordinates = [startPosition, ...routeCoordinates]
+      }
+
+      if (
+        routeCoordinates.length > 0 &&
+        haversineDistance(
+          routeCoordinates[routeCoordinates.length - 1],
+          selectedDestination.coords,
+        ) > 2
+      ) {
+        routeCoordinates = [...routeCoordinates, selectedDestination.coords]
+      }
 
       if (routeCoordinates.length < 2) {
         routeCoordinates = [startPosition, selectedDestination.coords]
@@ -303,11 +323,23 @@ function App() {
         request,
         map: indoorResult.indoorMap,
         route: indoorResult.route,
+        steps: buildIndoorDirections(
+          indoorResult.route,
+          request.roomLabel ?? request.roomNumber,
+        ),
       })
       setIndoorPrompt(null)
       setIndoorRoomInput('')
       setPendingIndoorRequest(null)
       setNavMessage(`Indoor route ready to ${request.roomNumber}.`)
+      announceInstruction(
+        buildIndoorDirections(
+          indoorResult.route,
+          request.roomLabel ?? request.roomNumber,
+        )
+          .map((step) => step.text)
+          .join(' '),
+      )
     },
     [buildIndoorRoute],
   )
@@ -651,6 +683,7 @@ function App() {
           indoorMap={indoorRoute.map}
           route={indoorRoute.route}
           roomNumber={indoorRoute.request.roomNumber}
+          steps={indoorRoute.steps}
           onClose={handleDone}
         />
       )}

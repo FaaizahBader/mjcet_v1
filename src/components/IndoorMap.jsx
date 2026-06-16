@@ -1,4 +1,10 @@
-export default function IndoorMap({ indoorMap, route, roomNumber, onClose }) {
+export default function IndoorMap({
+  indoorMap,
+  route,
+  roomNumber,
+  steps = [],
+  onClose,
+}) {
   if (!indoorMap || !route) return null
 
   const points = route.coordinates.map((point) => `${point.x},${point.y}`).join(' ')
@@ -37,6 +43,14 @@ export default function IndoorMap({ indoorMap, route, roomNumber, onClose }) {
           )}
         </svg>
       </div>
+
+      {steps.length > 0 && (
+        <ol className="indoor-directions" aria-label="Indoor directions">
+          {steps.map((step) => (
+            <li key={step.id}>{step.text}</li>
+          ))}
+        </ol>
+      )}
     </section>
   )
 }

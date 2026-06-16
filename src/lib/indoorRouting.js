@@ -2,6 +2,27 @@ function distanceBetween(a, b) {
   return Math.hypot(a.x - b.x, a.y - b.y)
 }
 
+function angleBetween(previous, next) {
+  const previousAngle = Math.atan2(previous.y, previous.x)
+  const nextAngle = Math.atan2(next.y, next.x)
+  return ((nextAngle - previousAngle + Math.PI * 3) % (Math.PI * 2)) - Math.PI
+}
+
+function directionKind(previousPoint, currentPoint, nextPoint) {
+  const previous = {
+    x: currentPoint.x - previousPoint.x,
+    y: currentPoint.y - previousPoint.y,
+  }
+  const next = {
+    x: nextPoint.x - currentPoint.x,
+    y: nextPoint.y - currentPoint.y,
+  }
+  const delta = angleBetween(previous, next)
+
+  if (Math.abs(delta) < Math.PI / 6) return 'straight'
+  return delta > 0 ? 'right' : 'left'
+}
+
 function buildAdjacency(map) {
   const adjacency = new Map()
 
@@ -74,4 +95,52 @@ export function findIndoorShortestPath(map, startId, endId) {
   }
 
   return null
+}
+
+export function buildIndoorDirections(route, destinationLabel) {
+  if (!route?.coordinates?.length) return []
+
+  const coordinates = route.coordinates.filter((point, index, points) => {
+    if (index === 0) return true
+    return distanceBetween(points[index - 1], point) > 1
+  })
+
+  const steps = [
+    {
+      id: 'start',
+      text: 'Go straight from the entrance.',
+    },
+  ]
+
+  for (let i = 1; i < coordinates.length - 1; i += 1) {
+    const kind = directionKind(
+      coordinates[i - 1],
+      coordinates[i],
+      coordinates[i + 1],
+    )
+
+    if (kind === 'straight') continue
+
+    steps.push({
+      id: `${kind}-${i}`,
+      text:
+        i === coordinates.length - 2
+          ? `Turn ${kind} for ${destinationLabel}.`
+          : `Turn ${kind} and continue.`,
+    })
+  }
+
+  steps.push({
+    id: 'arrive',
+    text: `You have reached ${destinationLabel}.`,
+  })
+
+  if (steps.length === 3 && steps[1].text.endsWith('and continue.')) {
+    steps[1] = {
+      ...steps[1],
+      text: steps[1].text.replace('and continue.', `for ${destinationLabel}.`),
+    }
+  }
+
+  return steps
 }

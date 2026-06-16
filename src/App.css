@@ -417,6 +417,19 @@
   stroke-width: 0.8;
 }
 
+.indoor-directions {
+  margin: 0;
+  padding: 12px 18px 18px 34px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.95rem;
+  box-shadow: 0 -2px 12px rgba(15, 23, 42, 0.08);
+}
+
+.indoor-directions li {
+  margin-bottom: 6px;
+}
+
 .indoor-route-destination {
   fill: #dc2626;
   stroke: #ffffff;

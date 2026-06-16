@@ -5,7 +5,7 @@ import { smoothCoordinate } from '../lib/geo'
 const HIGH_ACCURACY_OPTIONS = {
   enableHighAccuracy: true,
   maximumAge: 0,
-  timeout: 10000,
+  timeout: 25000,
 }
 
 const NETWORK_OPTIONS = {
@@ -15,6 +15,7 @@ const NETWORK_OPTIONS = {
 }
 
 const SMOOTHING_ALPHA = 0.35
+const FALLBACK_DELAY_MS = 30000
 
 function mapPosition(pos, source) {
   return {
@@ -125,7 +126,7 @@ export function useGeolocation() {
         setStatus('fallback')
         startWatch(NETWORK_OPTIONS, 'network')
       }
-    }, 12000)
+    }, FALLBACK_DELAY_MS)
 
     return clearWatch
   }, [clearWatch, startWatch])
