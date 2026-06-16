@@ -13,6 +13,7 @@ import { findNearestNodeId } from './lib/graph'
 import {
   announceArrival,
   announceInstruction,
+  announceInstructionSequence,
   announceNavigationStart,
   announceNotFound,
   announceReroute,
@@ -332,13 +333,11 @@ function App() {
       setIndoorRoomInput('')
       setPendingIndoorRequest(null)
       setNavMessage(`Indoor route ready to ${request.roomNumber}.`)
-      announceInstruction(
+      announceInstructionSequence(
         buildIndoorDirections(
           indoorResult.route,
           request.roomLabel ?? request.roomNumber,
-        )
-          .map((step) => step.text)
-          .join(' '),
+        ).map((step) => step.text),
       )
     },
     [buildIndoorRoute],
