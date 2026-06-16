@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import CampusMap from './components/CampusMap'
 import DestinationSearch from './components/DestinationSearch'
+import IndoorMap from './components/IndoorMap'
 import VoiceButton from './components/VoiceButton'
 import { useCampusData } from './hooks/useCampusData'
 import { useGeolocation } from './hooks/useGeolocation'
@@ -18,6 +19,14 @@ import {
   confirmNavigation,
 } from './lib/speech'
 import { findShortestPath } from './lib/pathfinding'
+import { getIndoorMap } from './lib/indoorMaps'
+import { findIndoorShortestPath } from './lib/indoorRouting'
+import {
+  canPromptForIndoor,
+  createIndoorRequest,
+  getBlockFromDestination,
+  isRoomNumberInput,
+} from './lib/navigationController'
 import {
   ARRIVAL_RADIUS_M,
   NAVIGATION_STATES,
@@ -48,6 +57,10 @@ function App() {
   const [routeProgress, setRouteProgress] = useState(null)
   const [navigationState, setNavigationState] = useState(NAVIGATION_STATES.IDLE)
   const [navMessage, setNavMessage] = useState('')
+  const [pendingIndoorRequest, setPendingIndoorRequest] = useState(null)
+  const [indoorPrompt, setIndoorPrompt] = useState(null)
+  const [indoorRoomInput, setIndoorRoomInput] = useState('')
+  const [indoorRoute, setIndoorRoute] = useState(null)
   const spokenStepRef = useRef(null)
   const routeVersionRef = useRef(0)
 
@@ -95,11 +108,46 @@ function App() {
     [campusData],
   )
 
+  const buildIndoorRoute = useCallback((request) => {
+    const indoorMap = getIndoorMap(request.block, request.floor)
+    if (!indoorMap) {
+      return {
+        ok: false,
+        error: `Indoor navigation for Block ${request.block} is not available yet.`,
+      }
+    }
+
+    const route = findIndoorShortestPath(
+      indoorMap,
+      indoorMap.entranceNodeId,
+      request.roomNodeId,
+    )
+
+    if (!route) {
+      return {
+        ok: false,
+        error: `No indoor route found to Room ${request.roomNumber}.`,
+      }
+    }
+
+    return { ok: true, indoorMap, route }
+  }, [])
+
   const prepareDestination = useCallback(
-    (selectedDestination, { speak = false, fromCoords = position } = {}) => {
+    (
+      selectedDestination,
+      {
+        speak = false,
+        fromCoords = position,
+        indoorRequest = null,
+      } = {},
+    ) => {
       setDestination(selectedDestination)
       setRouteProgress(null)
       setNavigationState(NAVIGATION_STATES.DESTINATION_SELECTED)
+      setPendingIndoorRequest(indoorRequest)
+      setIndoorPrompt(null)
+      setIndoorRoute(null)
       spokenStepRef.current = null
 
       if (!fromCoords) {
@@ -121,7 +169,11 @@ function App() {
       routeVersionRef.current = nextPlan.version
       setRoutePlan(nextPlan)
       setNavigationState(NAVIGATION_STATES.READY)
-      setNavMessage(`Route ready to ${selectedDestination.label}.`)
+      setNavMessage(
+        indoorRequest
+          ? `Outdoor route ready to ${selectedDestination.label}. Indoor route to Room ${indoorRequest.roomNumber} will start when you arrive.`
+          : `Route ready to ${selectedDestination.label}.`,
+      )
       if (speak) confirmNavigation(selectedDestination.label)
     },
     [buildRoutePlan, position],
@@ -154,6 +206,46 @@ function App() {
     [prepareDestination],
   )
 
+  const handleRawDestinationSubmit = useCallback(
+    (input) => {
+      if (!campusData) return
+
+      if (!isRoomNumberInput(input)) {
+        const matched = matchDestination(input)
+        if (matched) {
+          prepareDestination(matched)
+          return
+        }
+
+        setNavMessage('Destination not found.')
+        return
+      }
+
+      const indoorRequest = createIndoorRequest(input)
+      if (!indoorRequest.ok) {
+        setNavMessage(indoorRequest.error)
+        if (indoorRequest.unavailableFloor) announceNotFound()
+        return
+      }
+
+      const blockDestination = campusData.destinations.find(
+        (item) => item.id === indoorRequest.request.outdoorDestinationId,
+      )
+
+      if (!blockDestination) {
+        setNavMessage(
+          `Outdoor destination for Block ${indoorRequest.request.block} was not found.`,
+        )
+        return
+      }
+
+      prepareDestination(blockDestination, {
+        indoorRequest: indoorRequest.request,
+      })
+    },
+    [campusData, matchDestination, prepareDestination],
+  )
+
   const handleStartRoute = useCallback(() => {
     if (!destination || !routePlan) return
 
@@ -168,6 +260,10 @@ function App() {
     setRouteProgress(null)
     setNavigationState(NAVIGATION_STATES.IDLE)
     setNavMessage('')
+    setPendingIndoorRequest(null)
+    setIndoorPrompt(null)
+    setIndoorRoomInput('')
+    setIndoorRoute(null)
     spokenStepRef.current = null
   }, [])
 
@@ -178,6 +274,11 @@ function App() {
 
   const handleVoiceResult = useCallback(
     (transcript) => {
+      if (isRoomNumberInput(transcript)) {
+        handleRawDestinationSubmit(transcript)
+        return
+      }
+
       const matched = matchDestination(transcript)
       if (!matched) {
         setNavMessage('Destination not found.')
@@ -187,8 +288,52 @@ function App() {
 
       prepareDestination(matched, { speak: true })
     },
-    [matchDestination, prepareDestination],
+    [handleRawDestinationSubmit, matchDestination, prepareDestination],
   )
+
+  const startIndoorNavigation = useCallback(
+    (request) => {
+      const indoorResult = buildIndoorRoute(request)
+      if (!indoorResult.ok) {
+        setNavMessage(indoorResult.error)
+        return
+      }
+
+      setIndoorRoute({
+        request,
+        map: indoorResult.indoorMap,
+        route: indoorResult.route,
+      })
+      setIndoorPrompt(null)
+      setIndoorRoomInput('')
+      setPendingIndoorRequest(null)
+      setNavMessage(`Indoor route ready to Room ${request.roomNumber}.`)
+    },
+    [buildIndoorRoute],
+  )
+
+  const handleIndoorPromptYes = useCallback(() => {
+    setIndoorPrompt((current) =>
+      current ? { ...current, askingRoom: true } : current,
+    )
+  }, [])
+
+  const handleIndoorRoomSubmit = useCallback(() => {
+    if (!indoorPrompt) return
+
+    const indoorRequest = createIndoorRequest(indoorRoomInput)
+    if (!indoorRequest.ok) {
+      setNavMessage(indoorRequest.error)
+      return
+    }
+
+    if (indoorRequest.request.block !== indoorPrompt.block) {
+      setNavMessage(`Enter a room number for Block ${indoorPrompt.block}.`)
+      return
+    }
+
+    startIndoorNavigation(indoorRequest.request)
+  }, [indoorPrompt, indoorRoomInput, startIndoorNavigation])
 
   useEffect(() => {
     if (!position || !destination) return
@@ -234,6 +379,16 @@ function App() {
       setNavMessage('')
       announceArrival(destination.label)
       if (navigator.vibrate) navigator.vibrate([80, 40, 80])
+
+      if (pendingIndoorRequest) {
+        startIndoorNavigation(pendingIndoorRequest)
+      } else if (canPromptForIndoor(destination)) {
+        setIndoorPrompt({
+          block: getBlockFromDestination(destination),
+          blockLabel: destination.label,
+          askingRoom: false,
+        })
+      }
       return
     }
 
@@ -246,9 +401,11 @@ function App() {
   }, [
     destination,
     navigationState,
+    pendingIndoorRequest,
     rerouteFromCurrentPosition,
     position,
     routePlan,
+    startIndoorNavigation,
   ])
 
   const activeStep = useMemo(() => {
@@ -319,6 +476,7 @@ function App() {
           destinations={campusData.destinations}
           value={destination}
           onChange={handleDestinationSelect}
+          onSubmitQuery={handleRawDestinationSubmit}
         />
         <VoiceButton
           listening={listening}
@@ -402,7 +560,10 @@ function App() {
         </section>
       )}
 
-      {navigationState === NAVIGATION_STATES.REACHED && destination && (
+      {navigationState === NAVIGATION_STATES.REACHED &&
+        destination &&
+        !indoorPrompt &&
+        !indoorRoute && (
         <section className="navigation-card reached-card" aria-live="polite">
           <div className="success-icon" aria-hidden="true">
             OK
@@ -428,6 +589,72 @@ function App() {
             </button>
           </div>
         </section>
+      )}
+
+      {indoorPrompt && !indoorRoute && (
+        <section className="navigation-card indoor-prompt-card" aria-live="polite">
+          {!indoorPrompt.askingRoom ? (
+            <>
+              <div>
+                <p className="card-eyebrow">Indoor Navigation</p>
+                <h2>You have reached {indoorPrompt.blockLabel}.</h2>
+                <p className="card-subtitle">
+                  Would you like to navigate indoors?
+                </p>
+              </div>
+              <div className="arrival-actions">
+                <button className="secondary-action" type="button" onClick={handleDone}>
+                  No
+                </button>
+                <button
+                  className="primary-action"
+                  type="button"
+                  onClick={handleIndoorPromptYes}
+                >
+                  Yes
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <p className="card-eyebrow">Ground Floor Only</p>
+                <h2>Enter room number</h2>
+              </div>
+              <input
+                className="indoor-room-input"
+                value={indoorRoomInput}
+                onChange={(event) => setIndoorRoomInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault()
+                    handleIndoorRoomSubmit()
+                  }
+                }}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="Example: 1003"
+                aria-label="Indoor room number"
+              />
+              <button
+                className="primary-action"
+                type="button"
+                onClick={handleIndoorRoomSubmit}
+              >
+                Show Indoor Route
+              </button>
+            </>
+          )}
+        </section>
+      )}
+
+      {indoorRoute && (
+        <IndoorMap
+          indoorMap={indoorRoute.map}
+          route={indoorRoute.route}
+          roomNumber={indoorRoute.request.roomNumber}
+          onClose={handleDone}
+        />
       )}
     </div>
   )

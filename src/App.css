@@ -344,6 +344,85 @@
   gap: 10px;
 }
 
+.indoor-prompt-card {
+  bottom: 16px;
+}
+
+.indoor-room-input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.indoor-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: #f8fafc;
+}
+
+.indoor-panel-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  background: #ffffff;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.12);
+}
+
+.indoor-panel-header h2 {
+  margin: 2px 0 0;
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.indoor-close {
+  min-width: 76px;
+}
+
+.indoor-map-frame {
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+}
+
+.indoor-map-frame svg {
+  width: min(100%, 1100px);
+  height: auto;
+  background: #ffffff;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.16);
+}
+
+.indoor-route-line {
+  fill: none;
+  stroke: #2563eb;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 1px rgba(15, 23, 42, 0.3));
+}
+
+.indoor-route-start {
+  fill: #16a34a;
+  stroke: #ffffff;
+  stroke-width: 0.8;
+}
+
+.indoor-route-destination {
+  fill: #dc2626;
+  stroke: #ffffff;
+  stroke-width: 0.8;
+}
+
 .campus-map {
   flex: 1;
   width: 100%;

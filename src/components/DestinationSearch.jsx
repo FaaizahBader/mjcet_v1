@@ -1,6 +1,11 @@
 import { useMemo, useState } from 'react'
 
-export default function DestinationSearch({ destinations, value, onChange }) {
+export default function DestinationSearch({
+  destinations,
+  value,
+  onChange,
+  onSubmitQuery,
+}) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
 
@@ -21,6 +26,25 @@ export default function DestinationSearch({ destinations, value, onChange }) {
     setOpen(false)
   }
 
+  const handleSubmit = () => {
+    const normalized = query.trim()
+    if (!normalized) return
+
+    const exactMatch = filtered.find(
+      (destination) =>
+        destination.label.toLowerCase() === normalized.toLowerCase() ||
+        destination.id.toLowerCase() === normalized.toLowerCase(),
+    )
+
+    if (exactMatch) {
+      handleSelect(exactMatch)
+      return
+    }
+
+    onSubmitQuery?.(normalized)
+    setOpen(false)
+  }
+
   return (
     <div className="destination-search">
       <div className="destination-input-wrap">
@@ -31,6 +55,12 @@ export default function DestinationSearch({ destinations, value, onChange }) {
           onChange={(event) => {
             setQuery(event.target.value)
             setOpen(true)
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              handleSubmit()
+            }
           }}
           onFocus={() => setOpen(true)}
           aria-label="Search destination"
