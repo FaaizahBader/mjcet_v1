@@ -1,4 +1,9 @@
-import { getIndoorMap, getIndoorRoom, hasIndoorMap } from './indoorMaps'
+import {
+  findIndoorDestinationByAlias,
+  getIndoorMap,
+  getIndoorRoom,
+  hasIndoorMap,
+} from './indoorMaps'
 
 const ROOM_NUMBER_PATTERN = /^\d{4}$/
 
@@ -18,15 +23,56 @@ export function isRoomNumberInput(input) {
   return Boolean(parseRoomNumber(input))
 }
 
+export function findIndoorQuery(input) {
+  const parsed = parseRoomNumber(input)
+  if (parsed) return { type: 'roomNumber', parsed }
+
+  const block1GroundFloor = getIndoorMap('1', '0')
+  const aliasMatch = findIndoorDestinationByAlias(block1GroundFloor, input)
+  if (!aliasMatch) return null
+
+  return {
+    type: 'alias',
+    block: '1',
+    floor: '0',
+    aliasMatch,
+  }
+}
+
+export function isIndoorDestinationInput(input) {
+  return Boolean(findIndoorQuery(input))
+}
+
 export function blockDestinationId(block) {
   return `block_${block}`
 }
 
 export function createIndoorRequest(roomNumber) {
-  const parsed = parseRoomNumber(roomNumber)
-  if (!parsed) {
+  const indoorQuery = findIndoorQuery(roomNumber)
+  if (!indoorQuery) {
     return { ok: false, error: 'Enter a valid 4-digit room number.' }
   }
+
+  if (indoorQuery.type === 'alias') {
+    const indoorMap = getIndoorMap(indoorQuery.block, indoorQuery.floor)
+    const { aliasMatch } = indoorQuery
+
+    return {
+      ok: true,
+      request: {
+        block: indoorQuery.block,
+        floor: indoorQuery.floor,
+        room: aliasMatch.id,
+        roomNumber: aliasMatch.displayName,
+        indoorMapId: indoorMap.id,
+        outdoorDestinationId: blockDestinationId(indoorQuery.block),
+        roomNodeId: aliasMatch.destination.nodeId,
+        roomLabel: aliasMatch.destination.label,
+      },
+    }
+  }
+
+  const { parsed } = indoorQuery
 
   if (parsed.floor !== '0') {
     return {
@@ -56,6 +102,9 @@ export function createIndoorRequest(roomNumber) {
     ok: true,
     request: {
       ...parsed,
+      roomNumber: room.label
+        ? `${parsed.roomNumber} (${room.label})`
+        : parsed.roomNumber,
       indoorMapId: indoorMap.id,
       outdoorDestinationId: blockDestinationId(parsed.block),
       roomNodeId: room.nodeId,

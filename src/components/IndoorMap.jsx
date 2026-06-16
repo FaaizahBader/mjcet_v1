@@ -10,7 +10,7 @@ export default function IndoorMap({ indoorMap, route, roomNumber, onClose }) {
         <div>
           <p className="card-eyebrow">Indoor Navigation</p>
           <h2>{indoorMap.label}</h2>
-          <p className="card-subtitle">Route to Room {roomNumber}</p>
+          <p className="card-subtitle">Route to {roomNumber}</p>
         </div>
         <button
           type="button"
@@ -22,12 +22,18 @@ export default function IndoorMap({ indoorMap, route, roomNumber, onClose }) {
       </div>
 
       <div className="indoor-map-frame">
-        <svg viewBox={indoorMap.viewBox} role="img" aria-label={`Indoor route to room ${roomNumber}`}>
-          <image href={indoorMap.svgPath} x="0" y="0" width="249.55501" height="127.42333" />
+        <svg viewBox={indoorMap.viewBox} role="img" aria-label={`Indoor route to ${roomNumber}`}>
+          <image
+            href={indoorMap.imagePath}
+            x="0"
+            y="0"
+            width={indoorMap.imageWidth}
+            height={indoorMap.imageHeight}
+          />
           <polyline className="indoor-route-line" points={points} />
-          <circle className="indoor-route-start" cx={route.coordinates[0].x} cy={route.coordinates[0].y} r="2.4" />
+          <circle className="indoor-route-start" cx={route.coordinates[0].x} cy={route.coordinates[0].y} r="12" />
           {destination && (
-            <circle className="indoor-route-destination" cx={destination.x} cy={destination.y} r="2.8" />
+            <circle className="indoor-route-destination" cx={destination.x} cy={destination.y} r="14" />
           )}
         </svg>
       </div>

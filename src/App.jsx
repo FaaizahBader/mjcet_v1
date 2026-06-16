@@ -25,6 +25,7 @@ import {
   canPromptForIndoor,
   createIndoorRequest,
   getBlockFromDestination,
+  isIndoorDestinationInput,
   isRoomNumberInput,
 } from './lib/navigationController'
 import {
@@ -126,7 +127,7 @@ function App() {
     if (!route) {
       return {
         ok: false,
-        error: `No indoor route found to Room ${request.roomNumber}.`,
+        error: `No indoor route found to ${request.roomNumber}.`,
       }
     }
 
@@ -171,7 +172,7 @@ function App() {
       setNavigationState(NAVIGATION_STATES.READY)
       setNavMessage(
         indoorRequest
-          ? `Outdoor route ready to ${selectedDestination.label}. Indoor route to Room ${indoorRequest.roomNumber} will start when you arrive.`
+          ? `Outdoor route ready to ${selectedDestination.label}. Indoor route to ${indoorRequest.roomNumber} will start when you arrive.`
           : `Route ready to ${selectedDestination.label}.`,
       )
       if (speak) confirmNavigation(selectedDestination.label)
@@ -210,7 +211,7 @@ function App() {
     (input) => {
       if (!campusData) return
 
-      if (!isRoomNumberInput(input)) {
+      if (!isIndoorDestinationInput(input)) {
         const matched = matchDestination(input)
         if (matched) {
           prepareDestination(matched)
@@ -281,8 +282,7 @@ function App() {
 
       const matched = matchDestination(transcript)
       if (!matched) {
-        setNavMessage('Destination not found.')
-        announceNotFound()
+        handleRawDestinationSubmit(transcript)
         return
       }
 
@@ -307,7 +307,7 @@ function App() {
       setIndoorPrompt(null)
       setIndoorRoomInput('')
       setPendingIndoorRequest(null)
-      setNavMessage(`Indoor route ready to Room ${request.roomNumber}.`)
+      setNavMessage(`Indoor route ready to ${request.roomNumber}.`)
     },
     [buildIndoorRoute],
   )
@@ -328,7 +328,7 @@ function App() {
     }
 
     if (indoorRequest.request.block !== indoorPrompt.block) {
-      setNavMessage(`Enter a room number for Block ${indoorPrompt.block}.`)
+      setNavMessage(`Enter a ground-floor room or facility for Block ${indoorPrompt.block}.`)
       return
     }
 
@@ -619,7 +619,7 @@ function App() {
             <>
               <div>
                 <p className="card-eyebrow">Ground Floor Only</p>
-                <h2>Enter room number</h2>
+                <h2>Enter room or facility</h2>
               </div>
               <input
                 className="indoor-room-input"
@@ -631,10 +631,8 @@ function App() {
                     handleIndoorRoomSubmit()
                   }
                 }}
-                inputMode="numeric"
-                pattern="[0-9]*"
-                placeholder="Example: 1003"
-                aria-label="Indoor room number"
+                placeholder="Example: 1003 or Lift"
+                aria-label="Indoor room or facility"
               />
               <button
                 className="primary-action"

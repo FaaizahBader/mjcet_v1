@@ -405,7 +405,7 @@
 .indoor-route-line {
   fill: none;
   stroke: #2563eb;
-  stroke-width: 2.4;
+  stroke-width: 8;
   stroke-linecap: round;
   stroke-linejoin: round;
   filter: drop-shadow(0 1px 1px rgba(15, 23, 42, 0.3));
