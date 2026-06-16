@@ -1,21 +1,15 @@
-/* eslint-disable react-hooks/immutability, react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { smoothCoordinate } from '../lib/geo'
 
 const HIGH_ACCURACY_OPTIONS = {
   enableHighAccuracy: true,
   maximumAge: 0,
-  timeout: 25000,
-}
-
-const NETWORK_OPTIONS = {
-  enableHighAccuracy: false,
-  maximumAge: 30000,
-  timeout: 15000,
+  timeout: 10000,
 }
 
 const SMOOTHING_ALPHA = 0.35
-const FALLBACK_DELAY_MS = 30000
+const MAX_ACCEPTED_ACCURACY_M = 90
 
 function mapPosition(pos, source) {
   return {
@@ -35,7 +29,6 @@ export function useGeolocation() {
 
   const watchIdRef = useRef(null)
   const smoothRef = useRef(null)
-  const fallbackTimerRef = useRef(null)
   const modeRef = useRef('gps')
 
   const clearWatch = useCallback(() => {
@@ -43,13 +36,24 @@ export function useGeolocation() {
       navigator.geolocation.clearWatch(watchIdRef.current)
       watchIdRef.current = null
     }
-    if (fallbackTimerRef.current) {
-      clearTimeout(fallbackTimerRef.current)
-      fallbackTimerRef.current = null
-    }
   }, [])
 
   const applyPosition = useCallback((nextPosition) => {
+    const nextAccuracy = nextPosition.accuracy ?? Infinity
+
+    if (nextAccuracy > MAX_ACCEPTED_ACCURACY_M) {
+      setAccuracy(nextAccuracy)
+      setSource(nextPosition.source)
+      setStatus('pending')
+
+      if (!smoothRef.current) {
+        setError(
+          `Waiting for a more accurate GPS fix. Current accuracy is about ${Math.round(nextAccuracy)} meters.`,
+        )
+      }
+      return
+    }
+
     const smoothed = smoothCoordinate(
       smoothRef.current,
       nextPosition.coords,
@@ -86,19 +90,10 @@ export function useGeolocation() {
             return
           }
 
-          if (options.enableHighAccuracy && modeRef.current === 'gps') {
-            setStatus('fallback')
-            clearWatch()
-            modeRef.current = 'network'
-            startWatch(NETWORK_OPTIONS, 'network')
-            return
-          }
-
           setError(
-            'Unable to get your location. Try moving outdoors or enable location access in your browser.',
+            'Still looking for an accurate GPS fix. Try moving outdoors or check location access.',
           )
-          setStatus('error')
-          modeRef.current = 'error'
+          setStatus('pending')
         },
         options,
       )
@@ -118,15 +113,6 @@ export function useGeolocation() {
 
     modeRef.current = 'gps'
     startWatch(HIGH_ACCURACY_OPTIONS, 'gps')
-
-    fallbackTimerRef.current = setTimeout(() => {
-      if (modeRef.current === 'gps' && !smoothRef.current) {
-        clearWatch()
-        modeRef.current = 'network'
-        setStatus('fallback')
-        startWatch(NETWORK_OPTIONS, 'network')
-      }
-    }, FALLBACK_DELAY_MS)
 
     return clearWatch
   }, [clearWatch, startWatch])
