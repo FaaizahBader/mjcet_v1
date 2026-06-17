@@ -7,7 +7,7 @@ export function useCampusData() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch('/data/mjcet_campus.geojson')
+    fetch(`${import.meta.env.BASE_URL}data/mjcet_campus.geojson`)
       .then((response) => {
         if (!response.ok) throw new Error('Campus map not found')
         return response.json()

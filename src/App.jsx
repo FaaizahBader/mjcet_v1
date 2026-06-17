@@ -6,6 +6,7 @@ import IndoorMap from './components/IndoorMap'
 import VoiceButton from './components/VoiceButton'
 import { useCampusData } from './hooks/useCampusData'
 import { useGeolocation } from './hooks/useGeolocation'
+import { usePathSnapping } from './hooks/usePathSnapping'
 import { useSpeechRecognition } from './hooks/useSpeechRecognition'
 import { createDestinationMatcher } from './lib/destinations'
 import { haversineDistance } from './lib/geo'
@@ -81,6 +82,17 @@ function App() {
         : () => null,
     [campusData],
   )
+
+  const routeSnapCoordinates =
+    navigationState === NAVIGATION_STATES.ACTIVE
+      ? routeProgress?.remainingCoordinates ?? routePlan?.coordinates
+      : null
+  const { position: navigationPosition } = usePathSnapping({
+    position,
+    routeCoordinates: routeSnapCoordinates,
+    walkwayPaths: campusData?.paths,
+    active: navigationState === NAVIGATION_STATES.ACTIVE,
+  })
 
   const buildRoutePlan = useCallback(
     (selectedDestination, startPosition) => {
@@ -165,7 +177,7 @@ function App() {
       selectedDestination,
       {
         speak = false,
-        fromCoords = position,
+        fromCoords = navigationPosition,
         indoorRequest = null,
       } = {},
     ) => {
@@ -205,17 +217,17 @@ function App() {
       )
       if (speak) confirmNavigation(selectedDestination.label)
     },
-    [buildRoutePlan, position],
+    [buildRoutePlan, navigationPosition],
   )
 
   const rerouteFromCurrentPosition = useCallback(() => {
-    if (!destination || !position) return
+    if (!destination || !navigationPosition) return
 
     setNavigationState(NAVIGATION_STATES.REROUTING)
     setNavMessage('Rerouting from your current location...')
     announceReroute()
 
-    const nextPlan = buildRoutePlan(destination, position)
+    const nextPlan = buildRoutePlan(destination, navigationPosition)
     if (!nextPlan) {
       setNavMessage('Unable to reroute from your current location.')
       setNavigationState(NAVIGATION_STATES.ACTIVE)
@@ -229,7 +241,7 @@ function App() {
     routeDistanceAlongRef.current = 0
     setRoutePlan(nextPlan)
     setNavigationState(NAVIGATION_STATES.ACTIVE)
-  }, [buildRoutePlan, destination, position])
+  }, [buildRoutePlan, destination, navigationPosition])
 
   const handleDestinationSelect = useCallback(
     (selected) => {
@@ -400,39 +412,39 @@ function App() {
   }, [indoorPrompt, indoorRoomInput, startIndoorNavigation])
 
   useEffect(() => {
-    if (!position || !destination) return
+    if (!navigationPosition || !destination) return
 
     if (
       navigationState === NAVIGATION_STATES.DESTINATION_SELECTED ||
       navigationState === NAVIGATION_STATES.READY
     ) {
-      const updatedPlan = buildRoutePlan(destination, position)
+      const updatedPlan = buildRoutePlan(destination, navigationPosition)
       if (updatedPlan) {
         routeVersionRef.current = updatedPlan.version
         setRoutePlan(updatedPlan)
         setNavigationState(NAVIGATION_STATES.READY)
       }
     }
-  }, [buildRoutePlan, destination, navigationState, position])
+  }, [buildRoutePlan, destination, navigationPosition, navigationState])
 
   useEffect(() => {
     if (
       navigationState !== NAVIGATION_STATES.ACTIVE ||
-      !position ||
+      !navigationPosition ||
       !routePlan
     ) {
       return
     }
 
     const progress = buildRouteProgress(
-      position,
+      navigationPosition,
       routePlan.coordinates,
       routeDistanceAlongRef.current,
     )
     if (!progress) return
 
     const distanceToDestination = haversineDistance(
-      position,
+      navigationPosition,
       destination.coords,
     )
 
@@ -476,7 +488,7 @@ function App() {
     navigationState,
     pendingIndoorRequest,
     rerouteFromCurrentPosition,
-    position,
+    navigationPosition,
     routePlan,
     startIndoorNavigation,
   ])
@@ -525,12 +537,6 @@ function App() {
     navigationState === NAVIGATION_STATES.ACTIVE
       ? routeProgress?.remainingCoordinates ?? routePlan?.coordinates
       : routePlan?.coordinates
-  const visibleUserPosition =
-    navigationState === NAVIGATION_STATES.ACTIVE &&
-    routeProgress?.projectedPoint &&
-    routeProgress.distanceFromRoute <= Math.max(18, Math.min(accuracy ?? 18, 35))
-      ? routeProgress.projectedPoint
-      : position
 
   const remainingDistance =
     routeProgress?.remainingDistance ?? routePlan?.totalDistance ?? 0
@@ -604,7 +610,7 @@ function App() {
       )}
 
       <CampusMap
-        position={visibleUserPosition}
+        position={navigationPosition}
         positionLabel="You are here"
         accuracy={accuracy}
         routeCoordinates={visibleRouteCoordinates}
