@@ -259,7 +259,8 @@
 }
 
 .primary-action,
-.secondary-action {
+.secondary-action,
+.danger-action {
   min-height: 44px;
   border: none;
   border-radius: 10px;
@@ -278,6 +279,12 @@
 .secondary-action {
   background: #e2e8f0;
   color: #0f172a;
+}
+
+.danger-action {
+  background: #dc2626;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.22);
 }
 
 .guidance-card {
@@ -454,6 +461,10 @@
   pointer-events: none;
 }
 
+.app-navigation-active .map-controls {
+  bottom: 224px;
+}
+
 .map-controls .leaflet-control-zoom {
   pointer-events: auto;
   margin: 0 !important;
@@ -616,5 +627,10 @@
     right: auto;
     width: min(440px, calc(100% - 24px));
     transform: translateX(-50%);
+  }
+
+  .app-navigation-active .map-controls {
+    bottom: 72px;
+    right: calc(50% - 300px);
   }
 }

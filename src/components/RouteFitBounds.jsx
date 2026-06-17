@@ -6,11 +6,14 @@ export default function RouteFitBounds({
   routeCoordinates,
   position,
   destinationCoords,
+  enabled = true,
 }) {
   const map = useMap()
   const lastRouteKey = useRef(null)
 
   useEffect(() => {
+    if (!enabled) return
+
     if (!routeCoordinates?.length) {
       lastRouteKey.current = null
       return
@@ -26,7 +29,7 @@ export default function RouteFitBounds({
 
     const bounds = L.latLngBounds(points)
     map.fitBounds(bounds, { padding: [64, 64], maxZoom: 19 })
-  }, [map, routeCoordinates, position, destinationCoords])
+  }, [enabled, map, routeCoordinates, position, destinationCoords])
 
   return null
 }

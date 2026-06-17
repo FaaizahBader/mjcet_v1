@@ -17,6 +17,7 @@ import {
 import MapInitialCenter from './MapInitialCenter'
 import RouteFitBounds from './RouteFitBounds'
 import MapControls from './MapControls'
+import FollowUserPosition from './FollowUserPosition'
 
 export default function CampusMap({
   position,
@@ -26,6 +27,8 @@ export default function CampusMap({
   destination,
   walkwayPaths,
   onRecenter,
+  followPosition = false,
+  fitRoute = true,
 }) {
   return (
     <MapContainer
@@ -51,10 +54,12 @@ export default function CampusMap({
 
       <MapControls position={position} onRecenter={onRecenter} />
       <MapInitialCenter position={position} />
+      <FollowUserPosition active={followPosition} position={position} />
       <RouteFitBounds
         routeCoordinates={routeCoordinates}
         position={position}
         destinationCoords={destination?.coords}
+        enabled={fitRoute}
       />
 
       {walkwayPaths.map((path) => (

@@ -7,6 +7,8 @@ const PREFERRED_VOICE_NAMES = [
   'Microsoft Sonia',
   'Samantha',
 ]
+const MIN_REPEAT_INTERVAL_MS = 9000
+let lastSpoken = { text: '', time: 0 }
 
 function getPreferredVoice() {
   const voices = window.speechSynthesis?.getVoices?.() ?? []
@@ -52,8 +54,18 @@ function createUtterance(text) {
 export function speak(text) {
   if (!window.speechSynthesis) return
 
+  const spokenText = normalizeSpeechText(text)
+  const now = Date.now()
+  if (
+    spokenText === lastSpoken.text &&
+    now - lastSpoken.time < MIN_REPEAT_INTERVAL_MS
+  ) {
+    return
+  }
+
+  lastSpoken = { text: spokenText, time: now }
   window.speechSynthesis.cancel()
-  window.speechSynthesis.speak(createUtterance(text))
+  window.speechSynthesis.speak(createUtterance(spokenText))
 }
 
 export function speakSequence(lines, delayMs = 1100) {
@@ -77,6 +89,12 @@ export function speakSequence(lines, delayMs = 1100) {
   }
 
   speakNext()
+}
+
+export function stopSpeech() {
+  if (!window.speechSynthesis) return
+  window.speechSynthesis.cancel()
+  lastSpoken = { text: '', time: 0 }
 }
 
 export function confirmNavigation(label) {

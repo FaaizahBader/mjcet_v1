@@ -45,6 +45,12 @@ export default function DestinationSearch({
     setOpen(false)
   }
 
+  const handleClose = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setOpen(false)
+  }
+
   return (
     <div className="destination-search">
       <div className="destination-input-wrap">
@@ -70,7 +76,10 @@ export default function DestinationSearch({
           <button
             type="button"
             className="destination-close"
-            onClick={() => setOpen(false)}
+            onPointerDown={handleClose}
+            onMouseDown={handleClose}
+            onTouchStart={handleClose}
+            onClick={handleClose}
             aria-label="Close destination dropdown"
           >
             X

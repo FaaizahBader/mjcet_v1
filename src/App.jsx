@@ -18,6 +18,7 @@ import {
   announceNotFound,
   announceReroute,
   confirmNavigation,
+  stopSpeech,
 } from './lib/speech'
 import { findShortestPath } from './lib/pathfinding'
 import { getIndoorMap } from './lib/indoorMaps'
@@ -36,6 +37,7 @@ import {
   ARRIVAL_RADIUS_M,
   NAVIGATION_STATES,
   REROUTE_THRESHOLD_M,
+  TURN_PREVIEW_DISTANCE_M,
   buildRouteProgress,
   buildTurnByTurnSteps,
   calculateRouteDistance,
@@ -67,6 +69,9 @@ function App() {
   const [indoorRoomInput, setIndoorRoomInput] = useState('')
   const [indoorRoute, setIndoorRoute] = useState(null)
   const spokenStepRef = useRef(null)
+  const previewStepRef = useRef(null)
+  const lastRerouteAtRef = useRef(0)
+  const routeDistanceAlongRef = useRef(0)
   const routeVersionRef = useRef(0)
 
   const matchDestination = useMemo(
@@ -171,6 +176,8 @@ function App() {
       setIndoorPrompt(null)
       setIndoorRoute(null)
       spokenStepRef.current = null
+      previewStepRef.current = null
+      routeDistanceAlongRef.current = 0
 
       if (!fromCoords) {
         setRoutePlan(null)
@@ -217,6 +224,9 @@ function App() {
 
     routeVersionRef.current = nextPlan.version
     spokenStepRef.current = null
+    previewStepRef.current = null
+    lastRerouteAtRef.current = Date.now()
+    routeDistanceAlongRef.current = 0
     setRoutePlan(nextPlan)
     setNavigationState(NAVIGATION_STATES.ACTIVE)
   }, [buildRoutePlan, destination, position])
@@ -273,6 +283,10 @@ function App() {
 
     setNavigationState(NAVIGATION_STATES.ACTIVE)
     setNavMessage('')
+    setRouteProgress(null)
+    spokenStepRef.current = null
+    previewStepRef.current = null
+    routeDistanceAlongRef.current = 0
     announceNavigationStart(destination.label)
   }, [destination, routePlan])
 
@@ -287,6 +301,25 @@ function App() {
     setIndoorRoomInput('')
     setIndoorRoute(null)
     spokenStepRef.current = null
+    previewStepRef.current = null
+    routeDistanceAlongRef.current = 0
+  }, [])
+
+  const handleEndRoute = useCallback(() => {
+    stopSpeech()
+    setDestination(null)
+    setRoutePlan(null)
+    setRouteProgress(null)
+    setNavigationState(NAVIGATION_STATES.IDLE)
+    setPendingIndoorRequest(null)
+    setIndoorPrompt(null)
+    setIndoorRoomInput('')
+    setIndoorRoute(null)
+    spokenStepRef.current = null
+    previewStepRef.current = null
+    lastRerouteAtRef.current = 0
+    routeDistanceAlongRef.current = 0
+    setNavMessage('Route ended.')
   }, [])
 
   const handleNavigateAgain = useCallback(() => {
@@ -391,7 +424,11 @@ function App() {
       return
     }
 
-    const progress = buildRouteProgress(position, routePlan.coordinates)
+    const progress = buildRouteProgress(
+      position,
+      routePlan.coordinates,
+      routeDistanceAlongRef.current,
+    )
     if (!progress) return
 
     const distanceToDestination = haversineDistance(
@@ -406,6 +443,7 @@ function App() {
         remainingDistance: 0,
         progressPercent: 100,
       })
+      routeDistanceAlongRef.current = routePlan.totalDistance
       setNavigationState(NAVIGATION_STATES.REACHED)
       setNavMessage('')
       announceArrival(destination.label)
@@ -423,11 +461,15 @@ function App() {
       return
     }
 
-    if (progress.distanceFromRoute > REROUTE_THRESHOLD_M) {
+    if (
+      progress.distanceFromRoute > REROUTE_THRESHOLD_M &&
+      Date.now() - lastRerouteAtRef.current > 9000
+    ) {
       rerouteFromCurrentPosition()
       return
     }
 
+    routeDistanceAlongRef.current = progress.distanceAlong
     setRouteProgress(progress)
   }, [
     destination,
@@ -445,6 +487,21 @@ function App() {
     return getActiveStep(routePlan.steps, distanceAlong)
   }, [routePlan, routeProgress])
 
+  const nextTurnStep = useMemo(() => {
+    if (!routePlan || !activeStep || !routeProgress) return null
+
+    const distanceToCurrentStepEnd =
+      activeStep.endDistance - routeProgress.distanceAlong
+
+    if (distanceToCurrentStepEnd > TURN_PREVIEW_DISTANCE_M) return null
+
+    return routePlan.steps.find(
+      (step) =>
+        step.index === activeStep.index + 1 &&
+        (step.kind === 'left' || step.kind === 'right' || step.kind === 'arrive'),
+    )
+  }, [activeStep, routePlan, routeProgress])
+
   useEffect(() => {
     if (navigationState !== NAVIGATION_STATES.ACTIVE || !activeStep) return
     if (spokenStepRef.current === activeStep.id) return
@@ -452,6 +509,14 @@ function App() {
     spokenStepRef.current = activeStep.id
     announceInstruction(activeStep.text)
   }, [activeStep, navigationState])
+
+  useEffect(() => {
+    if (navigationState !== NAVIGATION_STATES.ACTIVE || !nextTurnStep) return
+    if (previewStepRef.current === nextTurnStep.id) return
+
+    previewStepRef.current = nextTurnStep.id
+    announceInstruction(`In ${TURN_PREVIEW_DISTANCE_M} meters, ${nextTurnStep.text}`)
+  }, [navigationState, nextTurnStep])
 
   const { listening, supported, startListening } =
     useSpeechRecognition(handleVoiceResult)
@@ -497,7 +562,11 @@ function App() {
   const showLocationHint = !locationError && locationHint && !navMessage
 
   return (
-    <div className="app">
+    <div
+      className={`app ${
+        navigationState === NAVIGATION_STATES.ACTIVE ? 'app-navigation-active' : ''
+      }`}
+    >
       <header className="app-header">
         <h1>MJCET Campus Navigation</h1>
       </header>
@@ -535,6 +604,8 @@ function App() {
         routeCoordinates={visibleRouteCoordinates}
         destination={destination}
         walkwayPaths={campusData.paths}
+        followPosition={navigationState === NAVIGATION_STATES.ACTIVE}
+        fitRoute={navigationState !== NAVIGATION_STATES.ACTIVE}
       />
 
       {destination &&
@@ -581,6 +652,13 @@ function App() {
             <span>{formatDuration(remainingSeconds)}</span>
             <span>{progressPercent}%</span>
           </div>
+          <button
+            className="danger-action"
+            type="button"
+            onClick={handleEndRoute}
+          >
+            End Route
+          </button>
         </section>
       )}
 

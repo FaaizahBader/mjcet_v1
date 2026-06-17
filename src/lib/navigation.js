@@ -13,6 +13,7 @@ export const WALKING_SPEED_MPS = 1.35
 export const ARRIVAL_RADIUS_M = 12
 export const REROUTE_THRESHOLD_M = 24
 export const STEP_COMPLETION_RADIUS_M = 8
+export const TURN_PREVIEW_DISTANCE_M = 32
 
 const INSTRUCTION_ARROWS = {
   straight: '^',
@@ -90,6 +91,50 @@ function projectPointToSegment(point, start, end) {
   }
 }
 
+function coordinateAtDistance(coordinates, targetDistance) {
+  if (!coordinates?.length) return null
+  if (targetDistance <= 0) return coordinates[0]
+
+  let traveled = 0
+
+  for (let i = 0; i < coordinates.length - 1; i += 1) {
+    const start = coordinates[i]
+    const end = coordinates[i + 1]
+    const segmentDistance = haversineDistance(start, end)
+
+    if (traveled + segmentDistance >= targetDistance) {
+      const t = segmentDistance === 0 ? 0 : (targetDistance - traveled) / segmentDistance
+      return [
+        start[0] + (end[0] - start[0]) * t,
+        start[1] + (end[1] - start[1]) * t,
+      ]
+    }
+
+    traveled += segmentDistance
+  }
+
+  return coordinates.at(-1)
+}
+
+function remainingRouteFromDistance(coordinates, distanceAlong) {
+  const startPoint = coordinateAtDistance(coordinates, distanceAlong)
+  if (!startPoint) return []
+
+  let traveled = 0
+  let segmentIndex = coordinates.length - 2
+
+  for (let i = 0; i < coordinates.length - 1; i += 1) {
+    const segmentDistance = haversineDistance(coordinates[i], coordinates[i + 1])
+    if (traveled + segmentDistance >= distanceAlong) {
+      segmentIndex = i
+      break
+    }
+    traveled += segmentDistance
+  }
+
+  return [startPoint, ...coordinates.slice(segmentIndex + 1)]
+}
+
 export function calculateRouteDistance(coordinates) {
   return routeDistance(coordinates)
 }
@@ -124,7 +169,7 @@ export function getDestinationBuilding(destination) {
   return destination.isManual ? 'Selected map point' : 'Campus destination'
 }
 
-export function buildRouteProgress(position, coordinates) {
+export function buildRouteProgress(position, coordinates, previousDistanceAlong = 0) {
   if (!position || !coordinates || coordinates.length < 2) return null
 
   const totalDistance = routeDistance(coordinates)
@@ -151,15 +196,23 @@ export function buildRouteProgress(position, coordinates) {
     distanceBeforeSegment += segmentDistance
   }
 
-  const remainingCoordinates = [
-    best.projectedPoint,
-    ...coordinates.slice(best.segmentIndex + 1),
-  ]
+  // Keep progress monotonic so GPS jitter cannot redraw completed route sections.
+  const stableDistanceAlong = clamp(
+    Math.max(best.distanceAlong, previousDistanceAlong),
+    0,
+    totalDistance,
+  )
+  const remainingCoordinates = remainingRouteFromDistance(
+    coordinates,
+    stableDistanceAlong,
+  )
   const remainingDistance = routeDistance(remainingCoordinates)
-  const progress = totalDistance > 0 ? best.distanceAlong / totalDistance : 1
+  const progress = totalDistance > 0 ? stableDistanceAlong / totalDistance : 1
 
   return {
     ...best,
+    projectedPoint: remainingCoordinates[0] ?? best.projectedPoint,
+    distanceAlong: stableDistanceAlong,
     remainingCoordinates,
     remainingDistance,
     totalDistance,
