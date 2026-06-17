@@ -15,27 +15,34 @@ const RELAXED_ACCURACY_M = Number(
   import.meta.env.VITE_RELAXED_GPS_ACCURACY_M ?? 70,
 )
 const MAX_WALKING_SPEED_MPS = 3.2
-const MAX_JUMP_M = 55
+const MAX_JUMP_M = 75
 const MIN_UPDATE_DISTANCE_M = 0.6
+const EXCELLENT_ACCURACY_M = 18
+const GOOD_ACCURACY_M = 30
 
-function createKalmanFilter(initialValue, initialAccuracy) {
-  return {
-    estimate: initialValue,
-    error: Math.max(initialAccuracy, 8) ** 2,
+function smoothPosition(previous, nextCoords, accuracy, speed, distanceFromPrevious) {
+  if (!previous) return nextCoords
+
+  if (
+    accuracy <= EXCELLENT_ACCURACY_M &&
+    (previous.accuracy > GOOD_ACCURACY_M || distanceFromPrevious > 4)
+  ) {
+    return nextCoords
   }
-}
 
-function updateKalmanFilter(filter, measurement, accuracy, deltaSeconds) {
-  // Higher reported GPS accuracy gets more trust; elapsed time allows walking motion to catch up.
-  const processNoise = Math.max(deltaSeconds, 0.2) * 0.000000000018
-  const measurementNoise = Math.max(accuracy, 5) ** 2 * 0.00000000000001
-  const predictedError = filter.error + processNoise
-  const gain = predictedError / (predictedError + measurementNoise)
+  let alpha = 0.42
 
-  return {
-    estimate: filter.estimate + gain * (measurement - filter.estimate),
-    error: (1 - gain) * predictedError,
-  }
+  if (accuracy <= EXCELLENT_ACCURACY_M) alpha = 0.78
+  else if (accuracy <= GOOD_ACCURACY_M) alpha = 0.62
+  else if (accuracy > MAX_ACCEPTED_ACCURACY_M) alpha = 0.24
+
+  if (speed > 0.8) alpha = Math.max(alpha, 0.68)
+  if (speed < 0.25) alpha = Math.min(alpha, 0.36)
+
+  return [
+    previous.coords[0] + alpha * (nextCoords[0] - previous.coords[0]),
+    previous.coords[1] + alpha * (nextCoords[1] - previous.coords[1]),
+  ]
 }
 
 function mapPosition(pos, source) {
@@ -55,7 +62,6 @@ export function useGeolocation() {
   const [source, setSource] = useState(null)
 
   const watchIdRef = useRef(null)
-  const filteredRef = useRef(null)
   const lastAcceptedRef = useRef(null)
   const modeRef = useRef('gps')
 
@@ -113,31 +119,14 @@ export function useGeolocation() {
       return
     }
 
-    const filter = filteredRef.current
-    const nextFilter = filter
-      ? {
-          lat: updateKalmanFilter(
-            filter.lat,
-            nextPosition.coords[0],
-            nextAccuracy,
-            deltaSeconds,
-          ),
-          lng: updateKalmanFilter(
-            filter.lng,
-            nextPosition.coords[1],
-            nextAccuracy,
-            deltaSeconds,
-          ),
-        }
-      : {
-          lat: createKalmanFilter(nextPosition.coords[0], nextAccuracy),
-          lng: createKalmanFilter(nextPosition.coords[1], nextAccuracy),
-        }
-
-    const filteredCoords = [
-      nextFilter.lat.estimate,
-      nextFilter.lng.estimate,
-    ]
+    // Smooth weak fixes, but let accurate outdoor GPS fixes correct the marker immediately.
+    const filteredCoords = smoothPosition(
+      previous,
+      nextPosition.coords,
+      nextAccuracy,
+      speed,
+      distanceFromPrevious,
+    )
 
     if (
       previous &&
@@ -149,7 +138,6 @@ export function useGeolocation() {
       return
     }
 
-    filteredRef.current = nextFilter
     lastAcceptedRef.current = {
       coords: filteredCoords,
       accuracy: nextAccuracy,

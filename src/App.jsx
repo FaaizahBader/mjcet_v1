@@ -525,6 +525,12 @@ function App() {
     navigationState === NAVIGATION_STATES.ACTIVE
       ? routeProgress?.remainingCoordinates ?? routePlan?.coordinates
       : routePlan?.coordinates
+  const visibleUserPosition =
+    navigationState === NAVIGATION_STATES.ACTIVE &&
+    routeProgress?.projectedPoint &&
+    routeProgress.distanceFromRoute <= Math.max(18, Math.min(accuracy ?? 18, 35))
+      ? routeProgress.projectedPoint
+      : position
 
   const remainingDistance =
     routeProgress?.remainingDistance ?? routePlan?.totalDistance ?? 0
@@ -598,7 +604,7 @@ function App() {
       )}
 
       <CampusMap
-        position={position}
+        position={visibleUserPosition}
         positionLabel="You are here"
         accuracy={accuracy}
         routeCoordinates={visibleRouteCoordinates}
