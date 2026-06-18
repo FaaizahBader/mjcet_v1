@@ -10,9 +10,10 @@ export const NAVIGATION_STATES = {
 }
 
 export const WALKING_SPEED_MPS = 1.35
-export const ARRIVAL_RADIUS_M = 12
+export const ARRIVAL_RADIUS_M = 6
+export const ARRIVAL_REMAINING_ROUTE_M = 5
 export const REROUTE_THRESHOLD_M = 24
-export const STEP_COMPLETION_RADIUS_M = 8
+export const STEP_COMPLETION_RADIUS_M = 4
 export const TURN_PREVIEW_DISTANCE_M = 32
 
 const INSTRUCTION_ARROWS = {
@@ -169,7 +170,12 @@ export function getDestinationBuilding(destination) {
   return destination.isManual ? 'Selected map point' : 'Campus destination'
 }
 
-export function buildRouteProgress(position, coordinates, previousDistanceAlong = 0) {
+export function buildRouteProgress(
+  position,
+  coordinates,
+  previousDistanceAlong = 0,
+  maxDistanceAlong = Infinity,
+) {
   if (!position || !coordinates || coordinates.length < 2) return null
 
   const totalDistance = routeDistance(coordinates)
@@ -198,7 +204,7 @@ export function buildRouteProgress(position, coordinates, previousDistanceAlong 
 
   // Keep progress monotonic so GPS jitter cannot redraw completed route sections.
   const stableDistanceAlong = clamp(
-    Math.max(best.distanceAlong, previousDistanceAlong),
+    Math.min(Math.max(best.distanceAlong, previousDistanceAlong), maxDistanceAlong),
     0,
     totalDistance,
   )
@@ -282,12 +288,16 @@ export function buildTurnByTurnSteps(coordinates, destinationLabel) {
   return steps
 }
 
-export function getActiveStep(steps, distanceAlong) {
+export function getActiveStep(steps, distanceAlong, allowArrival = false) {
   if (!steps.length) return null
 
-  return (
-    steps.find(
-      (step) => distanceAlong <= step.endDistance - STEP_COMPLETION_RADIUS_M,
-    ) ?? steps[steps.length - 1]
-  )
+  const active = steps.find((step) => {
+    if (step.kind === 'arrive') {
+      return allowArrival && distanceAlong >= step.startDistance - 1
+    }
+
+    return distanceAlong <= step.endDistance - STEP_COMPLETION_RADIUS_M
+  })
+
+  return active ?? [...steps].reverse().find((step) => step.kind !== 'arrive') ?? steps.at(-1)
 }

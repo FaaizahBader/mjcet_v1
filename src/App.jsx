@@ -36,6 +36,7 @@ import {
 } from './lib/navigationController'
 import {
   ARRIVAL_RADIUS_M,
+  ARRIVAL_REMAINING_ROUTE_M,
   NAVIGATION_STATES,
   REROUTE_THRESHOLD_M,
   TURN_PREVIEW_DISTANCE_M,
@@ -73,6 +74,7 @@ function App() {
   const previewStepRef = useRef(null)
   const lastRerouteAtRef = useRef(0)
   const routeDistanceAlongRef = useRef(0)
+  const routeProgressUpdatedAtRef = useRef(null)
   const routeVersionRef = useRef(0)
 
   const matchDestination = useMemo(
@@ -190,6 +192,7 @@ function App() {
       spokenStepRef.current = null
       previewStepRef.current = null
       routeDistanceAlongRef.current = 0
+      routeProgressUpdatedAtRef.current = null
 
       if (!fromCoords) {
         setRoutePlan(null)
@@ -239,6 +242,7 @@ function App() {
     previewStepRef.current = null
     lastRerouteAtRef.current = Date.now()
     routeDistanceAlongRef.current = 0
+    routeProgressUpdatedAtRef.current = null
     setRoutePlan(nextPlan)
     setNavigationState(NAVIGATION_STATES.ACTIVE)
   }, [buildRoutePlan, destination, navigationPosition])
@@ -299,6 +303,7 @@ function App() {
     spokenStepRef.current = null
     previewStepRef.current = null
     routeDistanceAlongRef.current = 0
+    routeProgressUpdatedAtRef.current = null
     announceNavigationStart(destination.label)
   }, [destination, routePlan])
 
@@ -315,6 +320,7 @@ function App() {
     spokenStepRef.current = null
     previewStepRef.current = null
     routeDistanceAlongRef.current = 0
+    routeProgressUpdatedAtRef.current = null
   }, [])
 
   const handleEndRoute = useCallback(() => {
@@ -331,6 +337,7 @@ function App() {
     previewStepRef.current = null
     lastRerouteAtRef.current = 0
     routeDistanceAlongRef.current = 0
+    routeProgressUpdatedAtRef.current = null
     setNavMessage('Route ended.')
   }, [])
 
@@ -436,10 +443,22 @@ function App() {
       return
     }
 
+    const now = Date.now()
+    const secondsSinceProgress =
+      routeProgressUpdatedAtRef.current == null
+        ? null
+        : Math.max((now - routeProgressUpdatedAtRef.current) / 1000, 0.25)
+    const maxDistanceAlong =
+      secondsSinceProgress == null
+        ? Infinity
+        : routeDistanceAlongRef.current +
+          Math.max(4, secondsSinceProgress * 2.4 + 1.5)
+
     const progress = buildRouteProgress(
       navigationPosition,
       routePlan.coordinates,
       routeDistanceAlongRef.current,
+      maxDistanceAlong,
     )
     if (!progress) return
 
@@ -448,7 +467,10 @@ function App() {
       destination.coords,
     )
 
-    if (distanceToDestination <= ARRIVAL_RADIUS_M) {
+    if (
+      progress.remainingDistance <= ARRIVAL_REMAINING_ROUTE_M &&
+      distanceToDestination <= ARRIVAL_RADIUS_M
+    ) {
       setRouteProgress({
         ...progress,
         remainingCoordinates: [destination.coords],
@@ -482,6 +504,7 @@ function App() {
     }
 
     routeDistanceAlongRef.current = progress.distanceAlong
+    routeProgressUpdatedAtRef.current = now
     setRouteProgress(progress)
   }, [
     destination,
@@ -510,7 +533,7 @@ function App() {
     return routePlan.steps.find(
       (step) =>
         step.index === activeStep.index + 1 &&
-        (step.kind === 'left' || step.kind === 'right' || step.kind === 'arrive'),
+        (step.kind === 'left' || step.kind === 'right'),
     )
   }, [activeStep, routePlan, routeProgress])
 
