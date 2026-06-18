@@ -449,6 +449,46 @@
   height: 100%;
 }
 
+.user-arrow-marker {
+  background: transparent;
+  border: 0;
+}
+
+.user-arrow-marker-inner {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  display: block;
+  filter: drop-shadow(0 3px 7px rgba(15, 23, 42, 0.28));
+  transform-origin: 50% 50%;
+}
+
+.user-arrow-marker-inner::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 3px;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-bottom: 25px solid #2563eb;
+}
+
+.user-arrow-marker-inner::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  width: 8px;
+  height: 8px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #ffffff;
+  opacity: 0.95;
+}
+
 .map-controls {
   position: absolute;
   right: 12px;

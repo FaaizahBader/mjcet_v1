@@ -641,6 +641,7 @@ function App() {
         walkwayPaths={campusData.paths}
         followPosition={navigationState === NAVIGATION_STATES.ACTIVE}
         fitRoute={navigationState !== NAVIGATION_STATES.ACTIVE}
+        navigating={navigationState === NAVIGATION_STATES.ACTIVE}
       />
 
       {destination &&
